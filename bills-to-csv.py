@@ -45,7 +45,7 @@ def print_to_console(rows_from_pdf: list) -> None:
         # looks like the first data will always be our vendor number
         vendor_no = vendor_info[0]
         # and what's left is our vendor name
-        vendor_name = " ".join(vendor_info[1:])
+        vendor_name = " ".join(vendor_info[1:]).replace(",", "")
 
         # convert date to ISO format
         isodate = datetime.strptime(first_part[-1], "%m/%d/%Y").isoformat()
