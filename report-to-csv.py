@@ -27,9 +27,9 @@ class SalaryAndBenefitsReport:
 
       # the index of the Title is between the first name and the fte index
       title = " ".join(splitted_text[2: fte_index])
-      base_salary = splitted_text[fte_index + 1]
-      retirement = splitted_text[fte_index + 2]
-      total_salary = splitted_text[fte_index + 3]
+      base_salary = splitted_text[fte_index + 1].replace(",", "")
+      retirement = splitted_text[fte_index + 2].replace(",", "")
+      total_salary = splitted_text[fte_index + 3].replace(",", "")
 
       print(",".join([last_name, first_name, title, base_salary, retirement, total_salary, fte]))
 
