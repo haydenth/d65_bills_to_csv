@@ -22,11 +22,11 @@ class SalaryAndBenefitsReport:
       fte_index = self.find_the_fte_index(splitted_text)
       fte = splitted_text[fte_index]
       # first name is the first column
-      last_name = splitted_text[0]
-      first_name = splitted_text[1]
+      last_name = splitted_text[0].replace(",", "")
+      first_name = splitted_text[1].replace(",", "")
 
       # the index of the Title is between the first name and the fte index
-      title = " ".join(splitted_text[2: fte_index])
+      title = " ".join(splitted_text[2: fte_index]).replace(",", "")
       base_salary = splitted_text[fte_index + 1].replace(",", "")
       retirement = splitted_text[fte_index + 2].replace(",", "")
       total_salary = splitted_text[fte_index + 3].replace(",", "")
@@ -66,10 +66,10 @@ class SalaryCompensationReport:
       contract_days_index = row.index(text)
       contract_days = row[contract_days_index]
 
-      first_name = row[contract_days_index - 1]
-      last_name = row[contract_days_index - 2]
+      first_name = row[contract_days_index - 1].replace(",", "")
+      last_name = row[contract_days_index - 2].replace(",", "")
       last_name_index = row.index(last_name)
-      position = " ".join(row[:last_name_index])
+      position = " ".join(row[:last_name_index]).replace(",", "")
 
       full_year_base_salary_index = contract_days_index + 1
       full_year_base_salary = row[full_year_base_salary_index].replace(",", "")
@@ -88,24 +88,31 @@ def print_headers(salary_and_benefits_reports_header=None, salary_compensation_r
     text = "Last Name,First Name,Title,Base Salary,Retirement,Total Salary,FTE"
   elif salary_compensation_report_header:
     text = "Position,Last Name,First Name,Contract Days,Full Year Base Salary,TRS,Total Salary"
-  print(f"\n{text}")
+  print(f"{text}")
 
 
 def main(pdf_file):
   reader = PdfReader(pdf_file)
+  header_state = ""
+
   for number in range(reader.numPages):
     page = reader.pages[number]
     source_text = page.extract_text()
     rows_from_pdf = source_text.split("\n")
 
     if re.search("Salary and Benefits Report", source_text, re.I):
-      print_headers(salary_and_benefits_reports_header=True)
+      if header_state != "Salary and Benefits Report":
+        print_headers(salary_and_benefits_reports_header=True)
+        header_state = "Salary and Benefits Report"
+
       salary_benefits_report_object = SalaryAndBenefitsReport()
       rows = salary_benefits_report_object.check_if_page_contains_headers(rows_from_pdf, source_text)
       salary_benefits_report_object.print_salary_and_benefit_data_to_console(rows)
     
     elif re.search("Salary Compensation Report", source_text, re.I):
-      print_headers(salary_compensation_report_header=True)
+      if header_state != "Salary Compensation Report":
+        print_headers(salary_compensation_report_header=True)
+        header_state = "Salary Compensation Report"
       SalaryCompensationReport.print_salary_compensation_data_to_console(source_text)
 
 
