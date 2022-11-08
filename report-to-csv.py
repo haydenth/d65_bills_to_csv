@@ -7,7 +7,7 @@ from PyPDF2 import PdfReader
 class SalaryAndBenefitsReport:
 
   @staticmethod
-  def check_if_page_contains_headers(rows_from_pdf: list, source_text: str) -> list:
+  def check_if_page_contains_headers(rows_from_pdf, source_text):
     # strip out the headlines
     match = re.search(r"Other Benefits", source_text, re.I)
     rows_from_pdf = source_text[match.span()[-1]:].strip().split("\n")
@@ -15,7 +15,7 @@ class SalaryAndBenefitsReport:
       rows_from_pdf = rows_from_pdf[:-1]
     return rows_from_pdf
 
-  def print_salary_and_benefit_data_to_console(self, rows: list) -> None:
+  def print_salary_and_benefit_data_to_console(self, rows):
     for row in rows:
       splitted_text = row.split()
 
@@ -34,7 +34,7 @@ class SalaryAndBenefitsReport:
       print(",".join([last_name, first_name, title, base_salary, retirement, total_salary, fte]))
 
   @staticmethod
-  def find_the_fte_index(splitted_text: str) -> int:
+  def find_the_fte_index(splitted_text):
     for text in splitted_text:
       try:
         float(text)
@@ -47,7 +47,7 @@ class SalaryAndBenefitsReport:
 
 class SalaryCompensationReport:
   @classmethod
-  def print_salary_compensation_data_to_console(cls, source_text: str) -> None:
+  def print_salary_compensation_data_to_console(cls, source_text):
     # strip out the headlines
     match = re.search(r"\nPayout in \n\d+-\d+\n", source_text, re.I)
     rows = source_text[match.span()[-1]:].split("\n")
@@ -62,7 +62,7 @@ class SalaryCompensationReport:
       cls.extract_salary_compensation_data(row, text)
 
   @staticmethod
-  def extract_salary_compensation_data(row: int, text: str) -> None:
+  def extract_salary_compensation_data(row, text):
       contract_days_index = row.index(text)
       contract_days = row[contract_days_index]
 
@@ -83,7 +83,7 @@ class SalaryCompensationReport:
       print(",".join([position, last_name, first_name, contract_days, full_year_base_salary, trs, total_salary]))
 
 
-def print_headers(salary_and_benefits_reports_header: bool | None = None, salary_compensation_report_header: bool | None = None) -> None:
+def print_headers(salary_and_benefits_reports_header=None, salary_compensation_report_header=None):
   if salary_and_benefits_reports_header:
     text = "Last Name,First Name,Title,Base Salary,Retirement,Total Salary,FTE"
   elif salary_compensation_report_header:
@@ -91,7 +91,7 @@ def print_headers(salary_and_benefits_reports_header: bool | None = None, salary
   print(f"\n{text}")
 
 
-def main(pdf_file: str) -> None:
+def main(pdf_file):
   reader = PdfReader(pdf_file)
   for number in range(reader.numPages):
     page = reader.pages[number]
